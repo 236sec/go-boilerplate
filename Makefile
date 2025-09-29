@@ -1,5 +1,7 @@
 # Path variable
 MIGRATIONS_PATH = ./src/migrations
+OPENAPI_PATH = ./docs/openapi.yaml
+SWAGGER_COMPILED_PATH = ./docs/compile/swagger.yaml
 
 serve:
 	go run ./src/main.go
@@ -12,3 +14,9 @@ migration-up:
 
 migration-down:
 	go run ./src/cmd/migrate.go down
+
+install-swagger-generate:
+	npm install -g swagger-cli
+
+swagger-generate:
+	swagger-cli bundle $(OPENAPI_PATH) --outfile $(SWAGGER_COMPILED_PATH) --type yaml
