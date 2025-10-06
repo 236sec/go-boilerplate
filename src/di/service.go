@@ -3,7 +3,7 @@ package di
 import (
 	"sync"
 
-	"goboilerplate.com/src/rest/usecases"
+	"goboilerplate.com/src/usecases"
 )
 
 // Create a singleton instance of GetHealthService

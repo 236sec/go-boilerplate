@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"goboilerplate.com/src/rest/usecases"
+	"goboilerplate.com/src/usecases"
 )
 
 type HealthHandler struct {
