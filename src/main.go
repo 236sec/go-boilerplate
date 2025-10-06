@@ -3,26 +3,16 @@ package main
 import (
 	"log/slog"
 
-	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
+	"goboilerplate.com/src/rest"
 )
 
 func main() {
 	app := fiber.New()
 
-	// MiddleWare
-	cfg := swagger.Config{
-		BasePath: "/",
-		FilePath: "./docs/compile/swagger.yaml",
-		Path:     "swagger",
-		Title:    "Swagger API Docs",
-	}
+	rest.RegisterMiddleware(app)
 
-	app.Use(swagger.New(cfg))
-
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	rest.RouteRegisterHandlers(app)
 
 	err := app.Listen(":3000")
 	if err != nil {
