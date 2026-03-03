@@ -1,15 +1,15 @@
 package usecases
 
-type HealthUseCase interface {
+type IHealthUseCase interface {
 	Apply() error
 }
 
-type HealthService struct{}
+type HealthUseCase struct{}
 
-func (u *HealthService) Apply() error {
+func (u *HealthUseCase) Apply() error {
 	return nil
 }
 
-func NewHealthService() HealthUseCase {
-	return &HealthService{}
+func NewHealthUseCase() *HealthUseCase {
+	return &HealthUseCase{}
 }

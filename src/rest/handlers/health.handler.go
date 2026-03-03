@@ -6,10 +6,10 @@ import (
 )
 
 type HealthHandler struct {
-	healthUseCase usecases.HealthUseCase
+	healthUseCase usecases.IHealthUseCase
 }
 
-func NewHealthHandler(healthUseCase usecases.HealthUseCase) *HealthHandler {
+func NewHealthHandler(healthUseCase usecases.IHealthUseCase) *HealthHandler {
 	return &HealthHandler{
 		healthUseCase: healthUseCase,
 	}
