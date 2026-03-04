@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo " Tidy Go modules..."
+
+go mod tidy
+
+# Stage all changes (including go.mod and go.sum) for commit
+git add .
+
+echo "Running tests..."
+go test ./...
+echo "All tests passed!"
