@@ -9,12 +9,16 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/joho/godotenv v1.5.1
 	github.com/rs/zerolog v1.34.0
+	github.com/stretchr/testify v1.11.1
+	gorm.io/driver/postgres v1.6.0
+	gorm.io/gorm v1.31.1
 )
 
 require (
 	github.com/andybalholm/brotli v1.2.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/clipperhouse/uax29/v2 v2.2.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-openapi/analysis v0.21.4 // indirect
 	github.com/go-openapi/errors v0.20.4 // indirect
 	github.com/go-openapi/jsonpointer v0.20.0 // indirect
@@ -43,7 +47,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.66.0 // indirect
 	go.mongodb.org/mongo-driver v1.13.1 // indirect
@@ -53,6 +57,4 @@ require (
 	golang.org/x/text v0.29.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/driver/postgres v1.6.0 // indirect
-	gorm.io/gorm v1.31.1 // indirect
 )
