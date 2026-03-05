@@ -8,5 +8,9 @@ go mod tidy
 git add .
 
 echo "Running tests..."
-go test ./...
+
+# Generate mocks before running tests
+make gen-mock
+# Run all tests and ensure they pass before allowing commit
+make test
 echo "All tests passed!"

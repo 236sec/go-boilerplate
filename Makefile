@@ -20,3 +20,12 @@ install-swagger-generate:
 
 swagger-generate:
 	swagger-cli bundle $(OPENAPI_PATH) --outfile $(SWAGGER_COMPILED_PATH) --type yaml
+
+gen-mock:
+	for f in src/repo/*.go; do \
+		base=$$(basename $$f .go | sed 's/\.repo//'); \
+		mockgen -source=$$f -destination=src/repo/mocks/mock_$$base.go -package=mocks; \
+	done
+
+test:
+	go test ./...
