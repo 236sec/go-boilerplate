@@ -12,4 +12,6 @@ linters:
     - staticcheck # Drop-in replacement for go vet
     - unused # Checks for unused constants, variables, functions and types
     - errname # Checks that error return values are named error
+    - whitespace # Checks for whitespace issues (e.g. trailing spaces, tabs)
+    - tagalign # Checks that struct field tags are aligned
 

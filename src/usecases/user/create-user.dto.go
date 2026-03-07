@@ -1,11 +1,11 @@
 package user
 
 type CreateUserRequest struct {
-	FirstName   string `json:"firstName" binding:"required"`
-	LastName    string `json:"lastName" binding:"required"`
-	Username    string `json:"username" binding:"required"`
-	Password    string `json:"password" binding:"required"`
-	DateOfBirth string `json:"dateOfBirth" binding:"required"`
+	FirstName   string `binding:"required" json:"firstName"`
+	LastName    string `binding:"required" json:"lastName"`
+	Username    string `binding:"required" json:"username"`
+	Password    string `binding:"required" json:"password"`
+	DateOfBirth string `binding:"required" json:"dateOfBirth"`
 }
 
 type CreateUserResponse struct {

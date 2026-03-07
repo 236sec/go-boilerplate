@@ -31,4 +31,4 @@ test:
 	go test ./...
 
 lint:
-	golangci-lint run
+	golangci-lint run --fix

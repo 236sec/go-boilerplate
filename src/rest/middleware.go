@@ -12,7 +12,6 @@ import (
 )
 
 func RegisterMiddleware(app *fiber.App) {
-
 	cfg := swagger.Config{
 		BasePath: "/",
 		FilePath: "./docs/compile/swagger.yaml",
