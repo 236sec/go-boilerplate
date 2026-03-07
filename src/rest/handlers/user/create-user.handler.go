@@ -28,12 +28,12 @@ func (h *CreateUserHandler) CreateUser(c *fiber.Ctx) error {
 	resp, err := h.createUserUseCase.Apply(req)
 	if err != nil {
 		switch err {
-		case usecases.ErrorUserAlreadyExists:
+		case usecases.ErrUserAlreadyExists:
 			return c.Status(fiber.StatusConflict).JSON(fiber.Map{
 				"status":  "error",
 				"message": "User already exists",
 			})
-		case usecases.ErrorCannotCreateUser:
+		case usecases.ErrCannotCreateUser:
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"status":  "error",
 				"message": "Cannot create user",

@@ -37,7 +37,7 @@ func TestCreateUserUseCase_Apply(t *testing.T) {
 				mockRepo.EXPECT().GetUserByUsername("testuser").Return(models.User{}, errors.New("db connection error")).Times(1)
 				mockRepo.EXPECT().CreateUser(gomock.Any()).Times(0)
 			},
-			expectedError: usecases.ErrorInternalServerError,
+			expectedError: usecases.ErrInternalServerError,
 		},
 		{
 			name: "Pass the db - run user domain logic once",

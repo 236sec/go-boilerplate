@@ -21,13 +21,13 @@ func NewLoginUserUseCase(userRepo repo.IUserRepo) *LoginUserUseCase {
 func (u *LoginUserUseCase) Apply(req LoginUserRequest) (LoginUserResponse, error) {
 	modelUser, err := u.userRepo.GetUserByUsername(req.Username)
 	if err != nil {
-		return LoginUserResponse{}, usecases.ErrorUserNotFound
+		return LoginUserResponse{}, usecases.ErrUserNotFound
 	}
 	
 	domainUser := domain.FromModel(modelUser)
 	
 	if !domainUser.IsAbleToLogin() {
-		return LoginUserResponse{}, usecases.ErrorUserNotAbleToLogin
+		return LoginUserResponse{}, usecases.ErrUserNotAbleToLogin
 	}
 	
 	// TODO: Add proper password verification here

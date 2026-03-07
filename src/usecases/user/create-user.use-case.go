@@ -26,10 +26,10 @@ func NewCreateUserUseCase(userRepo repo.IUserRepo) *CreateUserUseCase {
 func (u *CreateUserUseCase) Apply(req CreateUserRequest) (CreateUserResponse, error) {
 	existingUser, err := u.userRepo.GetUserByUsername(req.Username)
 	if err == nil && existingUser.ID != 0 {
-		return CreateUserResponse{}, usecases.ErrorUserAlreadyExists
+		return CreateUserResponse{}, usecases.ErrUserAlreadyExists
 	}
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return CreateUserResponse{}, usecases.ErrorInternalServerError
+		return CreateUserResponse{}, usecases.ErrInternalServerError
 	}
 	
 	newUser, err := u.userRepo.CreateUser(models.User{
@@ -41,7 +41,7 @@ func (u *CreateUserUseCase) Apply(req CreateUserRequest) (CreateUserResponse, er
 		Role:        "user", // Default role
 	})
 	if err != nil {
-		return CreateUserResponse{}, usecases.ErrorCannotCreateUser
+		return CreateUserResponse{}, usecases.ErrCannotCreateUser
 	}
 	
 	return CreateUserResponse{

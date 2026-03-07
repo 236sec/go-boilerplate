@@ -21,7 +21,7 @@ func (h *GetUserHandler) GetUser(c *fiber.Ctx) error {
 	resp, err := h.getUserUseCase.Apply(userID)
 	if err != nil {
 		switch err {
-		case usecases.ErrorUserNotFound:
+		case usecases.ErrUserNotFound:
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "error",
 				"message": "User not found",

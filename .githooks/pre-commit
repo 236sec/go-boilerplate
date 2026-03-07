@@ -4,6 +4,9 @@ echo " Tidy Go modules..."
 
 go mod tidy
 
+echo "Linting code with golangci-lint..."
+golangci-lint run --config .golangci.yml
+
 # Stage all changes (including go.mod and go.sum) for commit
 git add .
 

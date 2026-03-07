@@ -22,7 +22,7 @@ func NewGetUserUseCase(userRepo repo.IUserRepo) *GetUserUseCase {
 func (u *GetUserUseCase) Apply(username string) (GetUserResponse, error) {
 	user, err := u.userRepo.GetUserByUsername(username)
 	if err != nil {
-		return GetUserResponse{}, usecases.ErrorUserNotFound
+		return GetUserResponse{}, usecases.ErrUserNotFound
 	}
 	return GetUserResponse{
 		ID:       user.ID,

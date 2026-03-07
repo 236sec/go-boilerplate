@@ -28,17 +28,17 @@ func (h *LoginUserHandler) LoginUser(c *fiber.Ctx) error {
 	resp, err := h.loginUserUseCase.Apply(req)
 	if err != nil {
 		switch err {
-		case usecases.ErrorUserNotFound:
+		case usecases.ErrUserNotFound:
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"status":  "error",
 				"message": "User not found",
 			})
-		case usecases.ErrorInvalidCredentials:
+		case usecases.ErrInvalidCredentials:
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"status":  "error",
 				"message": "Invalid credentials",
 			})
-		case usecases.ErrorUserNotAbleToLogin:
+		case usecases.ErrUserNotAbleToLogin:
 			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 				"status":  "error",
 				"message": "User is not able to login",
