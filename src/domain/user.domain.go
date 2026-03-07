@@ -12,6 +12,15 @@ type User struct {
 	dateOfBirth string
 }
 
+// --- Getters ---
+func (u User) ID() int            { return u.id }
+func (u User) FirstName() string  { return u.firstName }
+func (u User) LastName() string   { return u.lastName }
+func (u User) Username() string   { return u.username }
+func (u User) Password() string   { return u.password }
+func (u User) Role() string       { return u.role }
+func (u User) DateOfBirth() string { return u.dateOfBirth }
+
 func (u *User) GetFullName() string {
 	return u.firstName + " " + u.lastName
 }

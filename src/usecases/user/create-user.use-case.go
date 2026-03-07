@@ -6,7 +6,7 @@ import (
 	"goboilerplate.com/src/models"
 	"goboilerplate.com/src/repo"
 	"goboilerplate.com/src/usecases"
-	"gorm.io/gorm"
+	"goboilerplate.com/src/utils/database"
 )
 
 
@@ -28,7 +28,7 @@ func (u *CreateUserUseCase) Apply(req CreateUserRequest) (CreateUserResponse, er
 	if err == nil && existingUser.ID != 0 {
 		return CreateUserResponse{}, usecases.ErrUserAlreadyExists
 	}
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if err != nil && !errors.Is(err, database.ErrRecordNotFound) {
 		return CreateUserResponse{}, usecases.ErrInternalServerError
 	}
 	

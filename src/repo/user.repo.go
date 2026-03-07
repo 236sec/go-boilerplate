@@ -2,7 +2,7 @@ package repo
 
 import (
 	"goboilerplate.com/src/models"
-	"goboilerplate.com/src/utils"
+	"goboilerplate.com/src/utils/database"
 )
 
 type IUserRepo interface {
@@ -11,10 +11,10 @@ type IUserRepo interface {
 }
 
 type UserRepo struct {
-	db utils.GormDB
+	db database.Database
 }
 
-func NewUserRepo(db utils.GormDB) *UserRepo {
+func NewUserRepo(db database.Database) *UserRepo {
 	return &UserRepo{db: db}
 }
 

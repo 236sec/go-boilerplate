@@ -1,4 +1,4 @@
-package utils
+package database
 
 import (
 	"fmt"
@@ -12,47 +12,37 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-// Database wraps gorm.DB and implements repository interfaces
-type Database struct {
-	*gorm.DB
+type GormDB struct {
+	DB *gorm.DB
 }
 
-type GormDB interface {
-	Create(value interface{}) error
-	Where(query interface{}, args ...interface{}) GormDB
-	First(dest interface{}, conds ...interface{}) error
-}
-
-// Create implements the GormDB interface
-func (db *Database) Create(value interface{}) error {
+// Create implements the Database interface
+func (db *GormDB) Create(value any) error {
 	return db.DB.Create(value).Error
 }
 
-// Where implements the GormDB interface  
-func (db *Database) Where(query interface{}, args ...interface{}) GormDB {
-	return &Database{DB: db.DB.Where(query, args...)}
+// Find implements the Database interface
+func (db *GormDB) Find(dest any, conds ...any) error {
+	return db.DB.Find(dest, conds...).Error
 }
 
-// First implements the GormDB interface
-func (db *Database) First(dest interface{}, conds ...interface{}) error {
+// First implements the Database interface
+func (db *GormDB) First(dest any, conds ...any) error {
 	return db.DB.First(dest, conds...).Error
 }
 
+// Where implements the Database interface
+func (db *GormDB) Where(query any, args ...any) Database {
+	return &GormDB{DB: db.DB.Where(query, args...)}
+}
+
 var (
-	dbInstance *Database
+	dbInstance *GormDB
 	dbOnce     sync.Once
 )
 
-// GetDatabase returns a singleton database connection
-func GetDatabase() *Database {
-	dbOnce.Do(func() {
-		dbInstance = initDatabase()
-	})
-	return dbInstance
-}
-
 // initDatabase initializes the database connection
-func initDatabase() *Database {
+func initDatabase() *GormDB {
 	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		log.Printf("Warning: Error loading .env file: %v", err)
@@ -88,7 +78,7 @@ func initDatabase() *Database {
 
 	log.Println("Database connection established successfully")
 
-	return &Database{DB: db}
+	return &GormDB{DB: db}
 }
 
 // DatabaseConfig holds database configuration
@@ -120,6 +110,6 @@ func getEnvOrDefault(key, defaultValue string) string {
 }
 
 // GetGormDB returns the underlying gorm.DB instance for migrations or advanced operations
-func (db *Database) GetGormDB() *gorm.DB {
+func (db *GormDB) GetGormDB() *gorm.DB {
 	return db.DB
 }

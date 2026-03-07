@@ -3,13 +3,9 @@ package di
 import (
 	"sync"
 
-	"goboilerplate.com/src/utils"
+	"goboilerplate.com/src/utils/database"
 )
 
-var GetDB = sync.OnceValue(func() *utils.Database {
-	return utils.GetDatabase()
-})
-
-var GetGormDB = sync.OnceValue(func() utils.GormDB {
-	return GetDB()
+var GetDB = sync.OnceValue(func() database.Database {
+	return database.GetDatabase()
 })

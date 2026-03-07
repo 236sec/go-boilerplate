@@ -5,8 +5,6 @@ import (
 	"goboilerplate.com/src/usecases"
 )
 
-
-
 type IGetUserUseCase interface {
 	Apply(username string) (GetUserResponse, error)
 }
@@ -25,10 +23,10 @@ func (u *GetUserUseCase) Apply(username string) (GetUserResponse, error) {
 		return GetUserResponse{}, usecases.ErrUserNotFound
 	}
 	return GetUserResponse{
-		ID:       user.ID,
-		Username: user.Username,
-		FirstName: user.FirstName,
-		LastName: user.LastName,
+		ID:          user.ID,
+		Username:    user.Username,
+		FirstName:   user.FirstName,
+		LastName:    user.LastName,
 		DateOfBirth: user.DateOfBirth,
 	}, nil
 }
