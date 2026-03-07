@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"goboilerplate.com/src/rest/response"
 	"goboilerplate.com/src/usecases"
 	"goboilerplate.com/src/usecases/user"
 )
@@ -25,26 +26,22 @@ func (h *CreateUserHandler) CreateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	resp, err := h.createUserUseCase.Apply(req)
+	resData, err := h.createUserUseCase.Apply(req)
+	var res response.BaseResponse[any]
+	
 	if err != nil {
 		switch err {
 		case usecases.ErrUserAlreadyExists:
-			return c.Status(fiber.StatusConflict).JSON(fiber.Map{
-				"status":  "error",
-				"message": "User already exists",
-			})
+			res = response.Responses[response.ConflictResponse]
 		case usecases.ErrCannotCreateUser:
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"status":  "error",
-				"message": "Cannot create user",
-			})
+			res = response.Responses[response.InternalServerErrorResponse]
 		default:
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"status":  "error",
-				"message": "Internal server error",
-			})
+			res = response.Responses[response.InternalServerErrorResponse]
 		}
+	} else {
+		res = response.Responses[response.SuccessResponse]
+		res.Data = resData
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(resp)
+	return c.Status(res.HttpStatus).JSON(res)
 }

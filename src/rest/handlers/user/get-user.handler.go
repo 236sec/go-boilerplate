@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"goboilerplate.com/src/rest/response"
 	"goboilerplate.com/src/usecases"
 	"goboilerplate.com/src/usecases/user"
 )
@@ -18,21 +19,20 @@ func NewGetUserHandler(getUserUseCase user.IGetUserUseCase) *GetUserHandler {
 
 func (h *GetUserHandler) GetUser(c *fiber.Ctx) error {
 	userID := c.Params("id")
-	resp, err := h.getUserUseCase.Apply(userID)
+	resData, err := h.getUserUseCase.Apply(userID)
+	var res response.BaseResponse[any]
+	
 	if err != nil {
 		switch err {
 		case usecases.ErrUserNotFound:
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":  "error",
-				"message": "User not found",
-			})
+			res = response.Responses[response.NotFoundResponse]
 		default:
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"status":  "error",
-				"message": "Internal server error",
-			})
+			res = response.Responses[response.InternalServerErrorResponse]
 		}
+	} else {
+		res = response.Responses[response.SuccessResponse]
+		res.Data = resData
 	}
 
-	return c.Status(fiber.StatusOK).JSON(resp)
+	return c.Status(res.HttpStatus).JSON(res)
 }

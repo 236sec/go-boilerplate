@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"goboilerplate.com/src/rest/response"
 	"goboilerplate.com/src/usecases"
 	"goboilerplate.com/src/usecases/user"
 )
@@ -25,31 +26,24 @@ func (h *LoginUserHandler) LoginUser(c *fiber.Ctx) error {
 		})
 	}
 
-	resp, err := h.loginUserUseCase.Apply(req)
+	resData, err := h.loginUserUseCase.Apply(req)
+	var res response.BaseResponse[any]
+	
 	if err != nil {
 		switch err {
 		case usecases.ErrUserNotFound:
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":  "error",
-				"message": "User not found",
-			})
+			res = response.Responses[response.NotFoundResponse]
 		case usecases.ErrInvalidCredentials:
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"status":  "error",
-				"message": "Invalid credentials",
-			})
+			res = response.Responses[response.UnauthorizedResponse]
 		case usecases.ErrUserNotAbleToLogin:
-			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-				"status":  "error",
-				"message": "User is not able to login",
-			})
+			res = response.Responses[response.ForbiddenResponse]
 		default:
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"status":  "error",
-				"message": "Internal server error",
-			})
+			res = response.Responses[response.InternalServerErrorResponse]
 		}
+	} else {
+		res = response.Responses[response.SuccessResponse]
+		res.Data = resData
 	}
 
-	return c.Status(fiber.StatusOK).JSON(resp)
+	return c.Status(res.HttpStatus).JSON(res)
 }
