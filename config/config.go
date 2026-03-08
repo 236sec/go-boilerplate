@@ -57,14 +57,12 @@ type PostgresConfig struct {
 // Redis config
 type RedisConfig struct {
 	RedisAddr      string `env:"REDIS_ADDR,default=localhost:6379"`
-	RedisPassword  string `env:"REDIS_PASSWORD,default="`
-	RedisDB        string `env:"REDIS_DB,default=0"`
-	RedisDefaultdb string `env:"REDIS_DEFAULTDB,default=0"`
+	RedisPassword  string `env:"REDIS_PASSWORD,default=password"`
+	RedisDB        int `env:"REDIS_DB,default=0"`
+	RedisDefaultdb int `env:"REDIS_DEFAULTDB,default=0"`
 	MinIdleConns   int    `env:"REDIS_MIN_IDLE_CONNS,default=0"`
 	PoolSize       int    `env:"REDIS_POOL_SIZE,default=10"`
 	PoolTimeout    int    `env:"REDIS_POOL_TIMEOUT,default=0"`
-	Password       string
-	DB             int
 }
 
 type SwaggerConfig struct {
