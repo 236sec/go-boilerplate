@@ -9,6 +9,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
+	"goboilerplate.com/config"
 )
 
 func main() {
@@ -16,12 +17,13 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	config := config.GetConfig()
 
-	user := os.Getenv("DB_USER")
-	pass := os.Getenv("DB_PASS")
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	dbname := os.Getenv("DB_NAME")
+	user := config.EnvConfig.Postgres.PostgresqlUser
+	pass := config.EnvConfig.Postgres.PostgresqlPassword
+	host := config.EnvConfig.Postgres.PostgresqlHost
+	port := config.EnvConfig.Postgres.PostgresqlPort
+	dbname := config.EnvConfig.Postgres.PostgresqlDbname
 
 	// Build DSN for PostgreSQL
 	// Important: sslmode=disable if you run local dev without SSL

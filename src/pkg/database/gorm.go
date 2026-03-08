@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"sync"
 
 	"github.com/joho/godotenv"
+	"goboilerplate.com/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -54,11 +54,11 @@ func initDatabase() *GormDB {
 	}
 
 	// Get database configuration from environment
-	config := getDatabaseConfig()
+	config := config.GetConfig().EnvConfig.Postgres
 
 	// Build PostgreSQL DSN
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=UTC",
-		config.Host, config.User, config.Password, config.DBName, config.Port)
+		config.PostgresqlHost, config.PostgresqlUser, config.PostgresqlPassword, config.PostgresqlDbname, config.PostgresqlPort)
 
 	// Configure GORM with custom logger
 	gormConfig := &gorm.Config{
@@ -84,34 +84,6 @@ func initDatabase() *GormDB {
 	log.Println("Database connection established successfully")
 
 	return &GormDB{DB: db}
-}
-
-// DatabaseConfig holds database configuration
-type DatabaseConfig struct {
-	User     string
-	Password string
-	Host     string
-	Port     string
-	DBName   string
-}
-
-// getDatabaseConfig reads database configuration from environment variables
-func getDatabaseConfig() DatabaseConfig {
-	return DatabaseConfig{
-		User:     getEnvOrDefault("DB_USER", "postgres"),
-		Password: getEnvOrDefault("DB_PASS", "mypassword"),
-		Host:     getEnvOrDefault("DB_HOST", "localhost"),
-		Port:     getEnvOrDefault("DB_PORT", "5432"),
-		DBName:   getEnvOrDefault("DB_NAME", "boilerplate"),
-	}
-}
-
-// getEnvOrDefault returns environment variable value or default if not set
-func getEnvOrDefault(key, defaultValue string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return defaultValue
 }
 
 // GetGormDB returns the underlying gorm.DB instance for migrations or advanced operations

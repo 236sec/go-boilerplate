@@ -2,10 +2,8 @@ package user
 
 import (
 	"context"
-	"fmt"
 
 	"goboilerplate.com/src/domain"
-	"goboilerplate.com/src/pkg/contextx"
 	"goboilerplate.com/src/repo"
 	"goboilerplate.com/src/usecases"
 )
@@ -33,8 +31,6 @@ func (u *LoginUserUseCase) Apply(ctx context.Context, req LoginUserRequest) (Log
 	if !domainUser.IsAbleToLogin() {
 		return LoginUserResponse{}, usecases.ErrUserNotAbleToLogin
 	}
-
-	fmt.Println(contextx.GetRequestID(ctx), "Login")
 
 	// TODO: Add proper password verification here
 	// Example: bcrypt.CompareHashAndPassword([]byte(domainUser.Password), []byte(req.Password))

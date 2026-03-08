@@ -4,16 +4,16 @@ OPENAPI_PATH = ./docs/openapi.yaml
 SWAGGER_COMPILED_PATH = ./docs/compile/swagger.yaml
 
 serve:
-	go run ./src/main.go
+	go run ./cmd/main.go
 
 migration-generate:
 	migrate create -ext sql -dir $(MIGRATIONS_PATH) -seq $(name)
 
 migration-up:
-	go run ./src/cmd/migrate.go up
+	go run ./cmd/migrate/migrate.go up
 
 migration-down:
-	go run ./src/cmd/migrate.go down
+	go run ./cmd/migrate/migrate.go down
 
 install-swagger-generate:
 	npm install -g swagger-cli

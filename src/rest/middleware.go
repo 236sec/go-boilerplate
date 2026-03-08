@@ -1,32 +1,31 @@
 package rest
 
 import (
+	"context"
 	"log"
 	"os"
 
 	"github.com/gofiber/contrib/fiberzerolog"
-	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/rs/zerolog"
-	"goboilerplate.com/src/pkg/contextx"
+	"goboilerplate.com/src/pkg/swagger"
 	"goboilerplate.com/src/rest/response"
 )
 
+type contextKey string
+
+const requestIDKey contextKey = "requestId"
+
 func RegisterMiddleware(app *fiber.App) {
-	cfg := swagger.Config{
-		BasePath: "/",
-		FilePath: "./docs/compile/swagger.yaml",
-		Path:     "swagger",
-		Title:    "Swagger API Docs",
-	}
 	app.Use(cors.New())
 
-	app.Use(swagger.New(cfg))
+	swagger := swagger.GetSwagger()
+	app.Use(swagger)
 	
 	app.Use(func(c *fiber.Ctx) error {
-		ctx := contextx.GetContext(c.UserContext())
-		ctx = contextx.WithRequestID(ctx, "test")
+		ctx := c.UserContext()
+		ctx = context.WithValue(ctx, requestIDKey, c.Get("X-Request-ID"))
 		c.SetUserContext(ctx)
 		return c.Next()
 	})
