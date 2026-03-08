@@ -1,20 +1,26 @@
 #!/bin/bash
 set -e
 
-echo " Tidy Go modules..."
-
+echo "Tidy Go modules..."
 go mod tidy
 
-echo "Linting code with golangci-lint..."
-golangci-lint run --config .golangci.yml --fix
+# Get staged .go files only
+STAGED_GO_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$' || true)
 
-# Stage all changes (including go.mod and go.sum) for commit
-git add .
+if [ -n "$STAGED_GO_FILES" ]; then
+  echo "Linting staged files with golangci-lint..."
+  golangci-lint run --config .golangci.yml --fix $STAGED_GO_FILES
+
+  # Re-stage only the originally staged files (lint may have auto-fixed them)
+  git add $STAGED_GO_FILES
+else
+  echo "No staged .go files to lint."
+fi
+
+# Re-stage go.mod / go.sum if tidy changed them
+git add go.mod go.sum 2>/dev/null || true
 
 echo "Running tests..."
-
-# Generate mocks before running tests
 make gen-mock
-# Run all tests and ensure they pass before allowing commit
 make test
 echo "All tests passed!"
