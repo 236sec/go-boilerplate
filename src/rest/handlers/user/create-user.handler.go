@@ -26,7 +26,7 @@ func (h *CreateUserHandler) CreateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	resData, err := h.createUserUseCase.Apply(req)
+	resData, err := h.createUserUseCase.Apply(c.UserContext(), req)
 	var res response.BaseResponse[any]
 	
 	if err != nil {

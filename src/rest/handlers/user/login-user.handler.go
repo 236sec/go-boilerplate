@@ -26,7 +26,7 @@ func (h *LoginUserHandler) LoginUser(c *fiber.Ctx) error {
 		})
 	}
 
-	resData, err := h.loginUserUseCase.Apply(req)
+	resData, err := h.loginUserUseCase.Apply(c.UserContext(), req)
 	var res response.BaseResponse[any]
 	
 	if err != nil {

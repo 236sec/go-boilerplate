@@ -1,6 +1,7 @@
 package user
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -34,8 +35,8 @@ func TestCreateUserUseCase_Apply(t *testing.T) {
 			},
 			mockSetup: func(mockRepo *mocks.MockIUserRepo) {
 				// DB returns unexpected error → CreateUser should NOT be called
-				mockRepo.EXPECT().GetUserByUsername("testuser").Return(models.User{}, errors.New("db connection error")).Times(1)
-				mockRepo.EXPECT().CreateUser(gomock.Any()).Times(0)
+				mockRepo.EXPECT().GetUserByUsername(gomock.Any(), "testuser").Return(models.User{}, errors.New("db connection error")).Times(1)
+				mockRepo.EXPECT().CreateUser(gomock.Any(), gomock.Any()).Times(0)
 			},
 			expectedError: usecases.ErrInternalServerError,
 		},
@@ -50,8 +51,8 @@ func TestCreateUserUseCase_Apply(t *testing.T) {
 			},
 			mockSetup: func(mockRepo *mocks.MockIUserRepo) {
 				// User not found → CreateUser should be called exactly once
-				mockRepo.EXPECT().GetUserByUsername("newuser").Return(models.User{}, gorm.ErrRecordNotFound).Times(1)
-				mockRepo.EXPECT().CreateUser(gomock.Any()).Return(models.User{
+				mockRepo.EXPECT().GetUserByUsername(gomock.Any(), "newuser").Return(models.User{}, gorm.ErrRecordNotFound).Times(1)
+				mockRepo.EXPECT().CreateUser(gomock.Any(), gomock.Any()).Return(models.User{
 					ID:          1,
 					FirstName:   "New",
 					LastName:    "User",
@@ -77,7 +78,7 @@ func TestCreateUserUseCase_Apply(t *testing.T) {
 			tt.mockSetup(mockRepo)
 
 			useCase := NewCreateUserUseCase(mockRepo)
-			result, err := useCase.Apply(tt.request)
+			result, err := useCase.Apply(context.Background(), tt.request)
 
 			assert.ErrorIs(t,tt.expectedError,err)
 			assert.Equal(t, tt.expectedResult, result)

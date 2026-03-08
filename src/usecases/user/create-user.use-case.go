@@ -1,18 +1,19 @@
 package user
 
 import (
+	"context"
 	"errors"
 
 	"goboilerplate.com/src/models"
+	"goboilerplate.com/src/pkg/database"
 	"goboilerplate.com/src/repo"
 	"goboilerplate.com/src/usecases"
-	"goboilerplate.com/src/utils/database"
 )
 
 
 
 type ICreateUserUseCase interface {
-	Apply(req CreateUserRequest) (CreateUserResponse, error)
+	Apply(ctx context.Context, req CreateUserRequest) (CreateUserResponse, error)
 }
 
 type CreateUserUseCase struct {
@@ -23,8 +24,8 @@ func NewCreateUserUseCase(userRepo repo.IUserRepo) *CreateUserUseCase {
 	return &CreateUserUseCase{userRepo: userRepo}
 }
 
-func (u *CreateUserUseCase) Apply(req CreateUserRequest) (CreateUserResponse, error) {
-	existingUser, err := u.userRepo.GetUserByUsername(req.Username)
+func (u *CreateUserUseCase) Apply(ctx context.Context, req CreateUserRequest) (CreateUserResponse, error) {
+	existingUser, err := u.userRepo.GetUserByUsername(ctx, req.Username)
 	if err == nil && existingUser.ID != 0 {
 		return CreateUserResponse{}, usecases.ErrUserAlreadyExists
 	}
@@ -32,7 +33,7 @@ func (u *CreateUserUseCase) Apply(req CreateUserRequest) (CreateUserResponse, er
 		return CreateUserResponse{}, usecases.ErrInternalServerError
 	}
 	
-	newUser, err := u.userRepo.CreateUser(models.User{
+	newUser, err := u.userRepo.CreateUser(ctx, models.User{
 		Username:    req.Username,
 		Password:    req.Password,
 		FirstName:   req.FirstName,

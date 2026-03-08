@@ -1,13 +1,17 @@
 package user
 
 import (
+	"context"
+	"fmt"
+
 	"goboilerplate.com/src/domain"
+	"goboilerplate.com/src/pkg/contextx"
 	"goboilerplate.com/src/repo"
 	"goboilerplate.com/src/usecases"
 )
 
 type ILoginUserUseCase interface {
-	Apply(req LoginUserRequest) (LoginUserResponse, error)
+	Apply(ctx context.Context, req LoginUserRequest) (LoginUserResponse, error)
 }
 
 type LoginUserUseCase struct {
@@ -18,8 +22,8 @@ func NewLoginUserUseCase(userRepo repo.IUserRepo) *LoginUserUseCase {
 	return &LoginUserUseCase{userRepo: userRepo}
 }
 
-func (u *LoginUserUseCase) Apply(req LoginUserRequest) (LoginUserResponse, error) {
-	modelUser, err := u.userRepo.GetUserByUsername(req.Username)
+func (u *LoginUserUseCase) Apply(ctx context.Context, req LoginUserRequest) (LoginUserResponse, error) {
+	modelUser, err := u.userRepo.GetUserByUsername(ctx, req.Username)
 	if err != nil {
 		return LoginUserResponse{}, usecases.ErrUserNotFound
 	}
@@ -29,7 +33,9 @@ func (u *LoginUserUseCase) Apply(req LoginUserRequest) (LoginUserResponse, error
 	if !domainUser.IsAbleToLogin() {
 		return LoginUserResponse{}, usecases.ErrUserNotAbleToLogin
 	}
-	
+
+	fmt.Println(contextx.GetRequestID(ctx), "Login")
+
 	// TODO: Add proper password verification here
 	// Example: bcrypt.CompareHashAndPassword([]byte(domainUser.Password), []byte(req.Password))
 	// if domainUser.Password != req.Password {

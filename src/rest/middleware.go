@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/rs/zerolog"
+	"goboilerplate.com/src/pkg/contextx"
 	"goboilerplate.com/src/rest/response"
 )
 
@@ -22,6 +23,13 @@ func RegisterMiddleware(app *fiber.App) {
 	app.Use(cors.New())
 
 	app.Use(swagger.New(cfg))
+	
+	app.Use(func(c *fiber.Ctx) error {
+		ctx := contextx.GetContext(c.UserContext())
+		ctx = contextx.WithRequestID(ctx, "test")
+		c.SetUserContext(ctx)
+		return c.Next()
+	})
 
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
 

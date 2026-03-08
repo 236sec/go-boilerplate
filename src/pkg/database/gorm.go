@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -17,7 +18,7 @@ type GormDB struct {
 }
 
 // Create implements the Database interface
-func (db *GormDB) Create(value any) error {
+func (db *GormDB) Create(value interface{}) error {
 	return db.DB.Create(value).Error
 }
 
@@ -34,6 +35,10 @@ func (db *GormDB) First(dest any, conds ...any) error {
 // Where implements the Database interface
 func (db *GormDB) Where(query any, args ...any) Database {
 	return &GormDB{DB: db.DB.Where(query, args...)}
+}
+
+func (db *GormDB) WithContext(ctx context.Context) Database {
+	return &GormDB{DB: db.DB.WithContext(ctx)}
 }
 
 var (
