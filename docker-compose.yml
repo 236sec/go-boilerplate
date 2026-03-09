@@ -1,4 +1,4 @@
-version: '4.0'
+version: "4.0"
 services:
   db:
     image: postgres:15
@@ -11,7 +11,16 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+    container_name: my-redis-server
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass "password"
+    volumes:
+      - redis-data:/data
 
 volumes:
   db_data:
-
+  redis-data:

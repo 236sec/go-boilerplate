@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"sync"
 
 	"github.com/joho/godotenv"
 	"goboilerplate.com/config"
@@ -13,41 +12,36 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type GormDB struct {
+type Database struct {
 	DB *gorm.DB
 }
 
 // Create implements the Database interface
-func (db *GormDB) Create(value interface{}) error {
+func (db *Database) Create(value interface{}) error {
 	return db.DB.Create(value).Error
 }
 
 // Find implements the Database interface
-func (db *GormDB) Find(dest any, conds ...any) error {
+func (db *Database) Find(dest any, conds ...any) error {
 	return db.DB.Find(dest, conds...).Error
 }
 
 // First implements the Database interface
-func (db *GormDB) First(dest any, conds ...any) error {
+func (db *Database) First(dest any, conds ...any) error {
 	return db.DB.First(dest, conds...).Error
 }
 
 // Where implements the Database interface
-func (db *GormDB) Where(query any, args ...any) Database {
-	return &GormDB{DB: db.DB.Where(query, args...)}
+func (db *Database) Where(query any, args ...any) IDatabase {
+	return &Database{DB: db.DB.Where(query, args...)}
 }
 
-func (db *GormDB) WithContext(ctx context.Context) Database {
-	return &GormDB{DB: db.DB.WithContext(ctx)}
+func (db *Database) WithContext(ctx context.Context) IDatabase {
+	return &Database{DB: db.DB.WithContext(ctx)}
 }
-
-var (
-	dbInstance *GormDB
-	dbOnce     sync.Once
-)
 
 // initDatabase initializes the database connection
-func initDatabase() *GormDB {
+func initDatabase() *Database {
 	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		log.Printf("Warning: Error loading .env file: %v", err)
@@ -83,10 +77,5 @@ func initDatabase() *GormDB {
 
 	log.Println("Database connection established successfully")
 
-	return &GormDB{DB: db}
-}
-
-// GetGormDB returns the underlying gorm.DB instance for migrations or advanced operations
-func (db *GormDB) GetGormDB() *gorm.DB {
-	return db.DB
+	return &Database{DB: db}
 }

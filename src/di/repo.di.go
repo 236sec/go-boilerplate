@@ -7,5 +7,5 @@ import (
 )
 
 var getUserRepo = sync.OnceValue(func() *repo.UserRepo {
-	return repo.NewUserRepo(GetDB())
+	return repo.NewUserRepo(GetDB(),GetRedis())
 })

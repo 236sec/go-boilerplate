@@ -63,6 +63,7 @@ type RedisConfig struct {
 	MinIdleConns   int    `env:"REDIS_MIN_IDLE_CONNS,default=0"`
 	PoolSize       int    `env:"REDIS_POOL_SIZE,default=10"`
 	PoolTimeout    int    `env:"REDIS_POOL_TIMEOUT,default=0"`
+	Protocol       int `env:"REDIS_PROTOCOL,default=2"`
 }
 
 type SwaggerConfig struct {
