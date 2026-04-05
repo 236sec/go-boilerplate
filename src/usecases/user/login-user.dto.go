@@ -1,8 +1,8 @@
 package user
 
 type LoginUserRequest struct {
-	Username string `binding:"required" json:"username"`
-	Password string `binding:"required" json:"password"`
+	Email    string `json:"email"    validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 type LoginUserResponse struct {

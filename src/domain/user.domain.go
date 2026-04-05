@@ -1,60 +1,74 @@
 package domain
 
-import "goboilerplate.com/src/models"
+import (
+	"time"
+)
+
+type UserRole string
+
+const (
+	RoleCustomer UserRole = "CUSTOMER"
+	RoleAdmin    UserRole = "ADMIN"
+)
 
 type User struct {
-	id          int
+	id          string
 	firstName   string
 	lastName    string
-	username    string
-	password    string
-	role        string
-	dateOfBirth string
+	email       string
+	phoneNumber string
+	role        UserRole
+	isActive    bool
+	createdAt   time.Time
+	updatedAt   time.Time
+}
+
+type NewUserParams struct {
+	ID          string
+	FirstName   string
+	LastName    string
+	Email       string
+	PhoneNumber string
+	Role        UserRole
+	IsActive    bool
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+// NewUser reconstructs a User domain from persistence (e.g. database models).
+func NewUser(params NewUserParams) *User {
+	return &User{
+		id:          params.ID,
+		firstName:   params.FirstName,
+		lastName:    params.LastName,
+		email:       params.Email,
+		phoneNumber: params.PhoneNumber,
+		role:        params.Role,
+		isActive:    params.IsActive,
+		createdAt:   params.CreatedAt,
+		updatedAt:   params.UpdatedAt,
+	}
 }
 
 // --- Getters ---
-func (u User) ID() int            { return u.id }
-func (u User) FirstName() string  { return u.firstName }
-func (u User) LastName() string   { return u.lastName }
-func (u User) Username() string   { return u.username }
-func (u User) Password() string   { return u.password }
-func (u User) Role() string       { return u.role }
-func (u User) DateOfBirth() string { return u.dateOfBirth }
+func (u User) ID() string           { return u.id }
+func (u User) FirstName() string    { return u.firstName }
+func (u User) LastName() string     { return u.lastName }
+func (u User) Email() string        { return u.email }
+func (u User) PhoneNumber() string  { return u.phoneNumber }
+func (u User) Role() UserRole       { return u.role }
+func (u User) IsActive() bool       { return u.isActive }
+func (u User) CreatedAt() time.Time { return u.createdAt }
+func (u User) UpdatedAt() time.Time { return u.updatedAt }
 
 func (u *User) GetFullName() string {
 	return u.firstName + " " + u.lastName
 }
 
 func (u *User) IsAdmin() bool {
-	return u.role == "admin"
+	return u.role == RoleAdmin
 }
 
 func (u *User) IsAbleToLogin() bool {
-	return u.role == "admin" || u.role == "user"
-}
-
-// FromModel converts models.User to domain.User
-func FromModel(modelUser models.User) User {
-	return User{
-		id:          modelUser.ID,
-		firstName:   modelUser.FirstName,
-		lastName:    modelUser.LastName,
-		username:    modelUser.Username,
-		password:    modelUser.Password,
-		role:        modelUser.Role,
-		dateOfBirth: modelUser.DateOfBirth,
-	}
-}
-
-// ToModel converts domain.User to models.User
-func (u *User) ToModel() models.User {
-	return models.User{
-		ID:          u.id,
-		FirstName:   u.firstName,
-		LastName:    u.lastName,
-		Username:    u.username,
-		Password:    u.password,
-		Role:        u.role,
-		DateOfBirth: u.dateOfBirth,
-	}
+	return u.isActive
 }

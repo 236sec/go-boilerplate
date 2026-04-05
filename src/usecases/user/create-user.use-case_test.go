@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"goboilerplate.com/src/models"
 	"goboilerplate.com/src/pkg/database"
@@ -15,10 +16,10 @@ import (
 
 type assertions struct {
 	name           string
-	request        CreateUserRequest
+	request        *CreateUserRequest
 	mockSetup      func(mockRepo *mocks.MockIUserRepo)
 	expectedError  error
-	expectedResult CreateUserResponse
+	expectedResult *CreateUserResponse
 }
 
 func TestCreateUserUseCase_Apply(t *testing.T) {
@@ -26,45 +27,42 @@ func TestCreateUserUseCase_Apply(t *testing.T) {
 	testCases := []assertions{
 		{
 			name: "Error at query user - should not run domain logic",
-			request: CreateUserRequest{
-				Username:    "testuser",
-				Password:    "password123",
-				FirstName:   "Test",
-				LastName:    "User",
-				DateOfBirth: "2000-01-01",
+			request: &CreateUserRequest{
+				Email:     "testuser",
+				Password:  "password123",
+				FirstName: "Test",
+				LastName:  "User",
 			},
 			mockSetup: func(mockRepo *mocks.MockIUserRepo) {
 				// DB returns unexpected error → CreateUser should NOT be called
-				mockRepo.EXPECT().GetUserByUsername(gomock.Any(), "testuser").Return(models.User{}, errors.New("db connection error")).Times(1)
+				mockRepo.EXPECT().GetUserByEmail(gomock.Any(), "testuser").Return(nil, errors.New("db connection error")).Times(1)
 				mockRepo.EXPECT().CreateUser(gomock.Any(), gomock.Any()).Times(0)
 			},
-			expectedError: usecases.ErrInternalServerError,
+			expectedError:  usecases.ErrInternalServerError,
+			expectedResult: &CreateUserResponse{},
 		},
 		{
 			name: "Pass the db - run user domain logic once",
-			request: CreateUserRequest{
-				Username:    "newuser",
-				Password:    "password123",
-				FirstName:   "New",
-				LastName:    "User",
-				DateOfBirth: "2000-01-01",
+			request: &CreateUserRequest{
+				Email:     "newuser",
+				Password:  "password123",
+				FirstName: "New",
+				LastName:  "User",
 			},
 			mockSetup: func(mockRepo *mocks.MockIUserRepo) {
 				// User not found → CreateUser should be called exactly once
-				mockRepo.EXPECT().GetUserByUsername(gomock.Any(), "newuser").Return(models.User{}, database.ErrRecordNotFound).Times(1)
-				mockRepo.EXPECT().CreateUser(gomock.Any(), gomock.Any()).Return(models.User{
-					ID:          1,
-					FirstName:   "New",
-					LastName:    "User",
-					Username:    "newuser",
-					Password:    "password123",
-					Role:        "user",
-					DateOfBirth: "2000-01-01",
+				mockRepo.EXPECT().GetUserByEmail(gomock.Any(), "newuser").Return(nil, database.ErrRecordNotFound).Times(1)
+				mockRepo.EXPECT().CreateUser(gomock.Any(), gomock.Any()).Return(&models.User{
+					ID:        uuid.Max,
+					FirstName: "New",
+					LastName:  "User",
+					Password:  "password123",
+					Role:      "user",
 				}, nil).Times(1)
 			},
 			expectedError: nil,
-			expectedResult: CreateUserResponse{
-				ID: 1,
+			expectedResult: &CreateUserResponse{
+				ID: uuid.Max.String(),
 			},
 		},
 	}

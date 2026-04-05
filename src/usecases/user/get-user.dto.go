@@ -1,9 +1,13 @@
 package user
 
 type GetUserResponse struct {
-	ID       int    `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Username string `json:"username"`
-	DateOfBirth string `json:"date_of_birth"`
+	ID          string `json:"id"`
+	FirstName   string `json:"firstName"`
+	LastName    string `json:"lastName"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phoneNumber"`
+	Role        string `json:"role"`
+	IsActive    bool   `json:"isActive"`
+	CreatedAt   string `json:"createdAt"`
+	UpdatedAt   string `json:"updatedAt"`
 }

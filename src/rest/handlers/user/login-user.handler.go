@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gofiber/fiber/v3"
+	"goboilerplate.com/src/rest/handlers"
 	"goboilerplate.com/src/rest/response"
 	"goboilerplate.com/src/usecases"
 	"goboilerplate.com/src/usecases/user"
@@ -19,14 +20,11 @@ func NewLoginUserHandler(loginUserUseCase user.ILoginUserUseCase) *LoginUserHand
 
 func (h *LoginUserHandler) LoginUser(c fiber.Ctx) error {
 	var req user.LoginUserRequest
-	if err := c.Bind().Body(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Invalid request body",
-		})
+	if !handlers.ValidateStruct(c, &req) {
+		return nil // Validation failed and response sent, early exit
 	}
 
-	resData, err := h.loginUserUseCase.Apply(c.Context(), req)
+	resData, err := h.loginUserUseCase.Apply(c.Context(), &req)
 	var res response.BaseResponse[any]
 
 	if err != nil {

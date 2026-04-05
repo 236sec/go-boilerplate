@@ -13,3 +13,5 @@ database:
 telemetry:
   enabled: false
   serviceName: boilerplate-service
+cache:
+  enabled: false

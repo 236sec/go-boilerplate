@@ -5,6 +5,7 @@ import (
 
 	"go.opentelemetry.io/otel"
 	"goboilerplate.com/src/domain"
+	"goboilerplate.com/src/models"
 	"goboilerplate.com/src/repo"
 	"goboilerplate.com/src/usecases"
 )
@@ -12,7 +13,7 @@ import (
 var loginUserTracer = otel.Tracer("usecase.loginuser")
 
 type ILoginUserUseCase interface {
-	Apply(ctx context.Context, req LoginUserRequest) (LoginUserResponse, error)
+	Apply(ctx context.Context, req *LoginUserRequest) (*LoginUserResponse, error)
 }
 
 type LoginUserUseCase struct {
@@ -23,39 +24,54 @@ func NewLoginUserUseCase(userRepo repo.IUserRepo) *LoginUserUseCase {
 	return &LoginUserUseCase{userRepo: userRepo}
 }
 
-func (u *LoginUserUseCase) Apply(ctx context.Context, req LoginUserRequest) (LoginUserResponse, error) {
+func (u *LoginUserUseCase) Apply(ctx context.Context, req *LoginUserRequest) (*LoginUserResponse, error) {
 	ctx, span := loginUserTracer.Start(ctx, "LoginUserUseCase.Apply")
 	defer span.End()
 
-	modelUser, err := u.userRepo.GetUserByUsername(ctx, req.Username)
+	modelUser, err := u.userRepo.GetUserByEmail(ctx, req.Email)
 	if err != nil {
-		return LoginUserResponse{}, usecases.ErrUserNotFound
+		return &LoginUserResponse{}, usecases.ErrUserNotFound
 	}
 
-	domainUser := domain.FromModel(modelUser)
+	domainUser := u.convertToDomainUser(modelUser)
 
 	if !domainUser.IsAbleToLogin() {
-		return LoginUserResponse{}, usecases.ErrUserNotAbleToLogin
+		return &LoginUserResponse{}, usecases.ErrUserNotAbleToLogin
 	}
 
 	// TODO: Add proper password verification here
 	// Example: bcrypt.CompareHashAndPassword([]byte(domainUser.Password), []byte(req.Password))
 	// if domainUser.Password != req.Password {
-	// 	return LoginUserResponse{}, usecases.ErrorInvalidCredentials
+	// 	return &LoginUserResponse{}, usecases.ErrorInvalidCredentials
 	// }
 
 	// TODO: Generate proper JWT token here
 	// For now, returning a placeholder token
 	token := generateToken(domainUser)
 
-	return LoginUserResponse{
-		Token: token,
+	return &LoginUserResponse{
+		Token: *token,
 	}, nil
 }
 
+func (u *LoginUserUseCase) convertToDomainUser(modelUser *models.User) *domain.User {
+	return domain.NewUser(domain.NewUserParams{
+		ID:          modelUser.ID.String(),
+		FirstName:   modelUser.FirstName,
+		LastName:    modelUser.LastName,
+		Email:       modelUser.Email,
+		PhoneNumber: modelUser.PhoneNumber,
+		Role:        domain.UserRole(modelUser.Role),
+		IsActive:    modelUser.IsActive,
+		CreatedAt:   modelUser.CreatedAt,
+		UpdatedAt:   modelUser.UpdatedAt,
+	})
+}
+
 // generateToken creates a token for the user (placeholder implementation)
-func generateToken(user domain.User) string {
+func generateToken(user *domain.User) *string {
 	// TODO: Implement proper JWT token generation
 	// This is just a placeholder
-	return "jwt_token_for_" + user.GetFullName()
+	token := "jwt_token_for_" + user.GetFullName()
+	return &token
 }

@@ -21,5 +21,8 @@ type IRedis interface {
 
 func GetRedisClient() IRedis {
 	cfg := config.GetConfig()
+	if !cfg.YMLConfig.Cache.Enabled {
+		return NewNoopRedisClient()
+	}
 	return NewRedisClient(&cfg.EnvConfig.Redis)
 }

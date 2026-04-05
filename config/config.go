@@ -23,6 +23,7 @@ type YMLConfig struct {
 	Server    ServerConfig
 	Swagger   SwaggerConfig
 	Database  DatabaseConfig
+	Cache     CacheConfig
 	Telemetry TelemetryConfig
 }
 
@@ -94,6 +95,11 @@ type SwaggerConfig struct {
 type TelemetryConfig struct {
 	Enabled     bool   `env:"TELEMETRY_ENABLED,default=false"`
 	ServiceName string `env:"TELEMETRY_SERVICE_NAME,default=boilerplate-service"`
+}
+
+// Cache config
+type CacheConfig struct {
+	Enabled bool
 }
 
 var GetConfig = sync.OnceValue(func() *Config {
